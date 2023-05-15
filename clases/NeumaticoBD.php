@@ -24,6 +24,20 @@ public function __construct(string $marca, string $medidas, ?float $precio=NULL,
     $this->id = $id;
 }
 
+public function setPathFoto($path)   {
+    $this->pathFoto=$path;
+}
+
+public function setId($id)   {
+    $this->id=$id;
+}
+
+public function getId(){
+    return $this->id;
+}
+public function getPathFoto(){
+    return $this->pathFoto;
+}
 public function toJSON()
 {
     $array= array("marca"=>$this->marca,"medidas"=>$this->medidas,"precio"=>$this->precio,"pathFoto"=>$this->pathFoto,"id"=>$this->id);
@@ -114,26 +128,13 @@ public function existe(array $obj){
 
 }
 
-public function gurdarEnArchivo(){
-
-    $ar= fopen("./archivos/neumaticosbd_borrados.txt", "a");
-        if(fwrite($ar, $this->marca . "," . $this->medidas . "," . $this->precio . "," . $this->pathFoto)){
-            $exito=true;
-            $mensaje = "Se guardo el neumatico en archivo correctamente";
-        }else{
-            $existe=FALSE;
-            $mensaje = "Ocurrio un error al guardar el neumatico en archivo";
-
-        }
-
-        return json_encode(array("exito"=>$exito,"mensaje"=>$mensaje));
-}
 
 
-public function subirFoto() : bool  {
 
-    $extension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-    $path_final = "./neumaticos/imagenes/" . $this->marca .".". $date = date('his', time()) . "." . $extension;
+public function subirFoto(string $path_final, string $extension)  {
+
+   // $extension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+   // $path_final = "./neumaticos/imagenes/" . $this->marca .".". $date = date('his', time()) . "." . $extension;
     $uploadOk = TRUE;
     
 
@@ -164,9 +165,9 @@ public function subirFoto() : bool  {
                 } 
                 else {
                     if (move_uploaded_file($_FILES["foto"]["tmp_name"], $path_final)) {
-                        $this->pathFoto = $path_final;
+                        //$this->pathFoto = $path_final;
                        
-                        return TRUE;
+                        return true;
                     } else {
                         echo "<br/>Lamentablemente ocurri&oacute; un error y no se pudo subir el archivo.";
                         return FALSE;
@@ -179,16 +180,37 @@ public function subirFoto() : bool  {
 
 
 public function guardarEnArchivo() {
+   
+    $exito=false;
+
+    $extension = pathinfo($this->pathFoto, PATHINFO_EXTENSION);
+    $pathNuevo= "./neumaticosBorrados/". $this->getId() . ".". $this->marca .".". "borrado"."." .date('his', time()) . "." . $extension;
 
 
-    
+    $ar= fopen("./archivos/neumaticosbd_borrados.txt", "a");
+    if(fwrite($ar, $this->marca . "," . $this->medidas . "," . $this->precio . "," . $pathNuevo. "\r\n")){
+
+        rename($this->pathFoto,$pathNuevo);
+
+        $exito=true;
+        $mensaje = "Se guardo el neumatico en archivo correctamente";
+    }else{
+
+        $exito=FALSE;
+        $mensaje = "Ocurrio un error al guardar el neumatico en archivo";
+
+    }
+
+    return json_encode(array("exito"=>$exito,"mensaje"=>$mensaje));
+
+
 }
-
 /*guardarEnArchivo: escribirá en un archivo de texto (./archivos/neumaticosbd_borrados.txt) toda la
 información del neumático más la nueva ubicación de la foto. La foto se moverá al subdirectorio
 “./neumaticosBorrados/”, con el nombre formado por el id punto marca punto 'borrado' punto hora,
 minutos y segundos del borrado (Ejemplo: 688.bridgestone.borrado.105905.jpg).
 Se retornará un JSON que contendrá: éxito(bool) y mensaje(string) indicando lo acontecido.*/
+
 }
 
 ?>

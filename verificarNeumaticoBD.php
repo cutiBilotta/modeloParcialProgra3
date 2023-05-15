@@ -6,21 +6,20 @@ $obj_neumatico= $_POST["obj_neumatico"];
 $mensaje= json_encode("");
 
 $n = json_decode($obj_neumatico);
-
-$nAux = new NeumaticoBD($n->marca, $n->medidas);
-$mensaje = json_decode("");
+$neumaticoBD= new NeumaticoBD($n->marca, $n->medidas);
 
 $array= NeumaticoBD::traer();
 
 foreach($array as $item){
-    if($item['marca'] == $nAux->marca && $item['medidas'] == $nAux->medidas){
+    if($item['marca'] == $neumaticoBD->marca && $item['medidas'] == $neumaticoBD->medidas){
         
-        $nAux= (object) $item;
-       // $mensaje = $nAux->toJSON();
-        $mensaje= $nAux->marca . " - " . $nAux->medidas . " - " . $nAux->precio . " - " . $nAux->id . " \r\n" ;
-        echo ($mensaje);
+        $neumaticoBD->precio = $item['precio'];
+        $neumaticoBD->setPathFoto($item['foto']);
+        $neumaticoBD->setId($item['id']);
 
-        //aca no puedo llamar al metodo toJSON para que me muestre la informacion
+        $mensaje = $neumaticoBD->toJSON();
+        echo $mensaje;
+       
     }
 }
 

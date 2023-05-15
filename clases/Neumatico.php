@@ -4,10 +4,10 @@ class Neumatico{
 
     public string $marca;
     public string $medidas;
-    public float $precio;
+    public ?float $precio;
 
 
-    public function __construct(string $marca, string $medidas, float $precio=0)
+    public function __construct(string $marca, string $medidas, ?float $precio= null)
     {
         $this->marca= $marca;
         $this->medidas=$medidas;

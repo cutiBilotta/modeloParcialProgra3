@@ -9,7 +9,9 @@ $precio = $_POST["precio"];
 $foto = $_FILES["foto"]['name'];
 $neumaticos= array();
 $exito = false;
-$n= new NeumaticoBD($marca, $medidas, $precio, NULL,  $foto);
+$extension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+$path_final = "./neumaticos/imagenes/" . $marca .".". $date = date('his', time()) . "." . $extension;
+$n= new NeumaticoBD($marca, $medidas, $precio, NULL,  $path_final);
 
 $array =NeumaticoBD::traer();
 foreach($array as $item){
@@ -19,7 +21,7 @@ foreach($array as $item){
 $rta= ($n->existe($neumaticos));
 
 if($rta == False){
-    if($n->subirFoto() && $n->Agregar()){
+    if($n->subirFoto($path_final, $extension) && $n->Agregar()){
         $mensaje= "El neumatico ha sido dado de alta con exito";
         $exito= true;
     }else{

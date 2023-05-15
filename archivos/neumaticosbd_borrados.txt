@@ -1,0 +1,2 @@
+firestone,chicas,563.23,./neumaticosBorrados/1.firestone.borrado.045740.png
+pirelli,medianas,563.23,./neumaticosBorrados/2.pirelli.borrado.045846.png
